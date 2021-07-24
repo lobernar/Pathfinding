@@ -1,7 +1,7 @@
 //init variables
 var container = document.getElementById("container");
-const BOARD_SIZE = 16;
-const SQUARE_SIZE = 10;
+const rows = 11;
+const cols = 22;
 var cells = [];
 var start, end;
 var currentKey = null;
@@ -15,12 +15,13 @@ function makeGrid(rows, cols) {
       let cell = document.createElement("div");
       container.appendChild(cell).className = "grid-item";
       cells[c] = cell;
+      cells[c].style.backgroundColor = "white"
     };
 }
 
 //Event when clicking on a cell
 function onClick(event) {
-    for(let i=0; i<(BOARD_SIZE*BOARD_SIZE); ++i) {
+    for(let i=0; i<(rows*cols); ++i) {
       //Add start cell 
       if(cells[i] == event.target && cells[i].contains(event.target) && currentKey == 83 && start == null) {
         cells[i].style.backgroundColor = "blue"
@@ -47,17 +48,38 @@ function releaseKey(event) {
 
 //Event for building walls
 function onHoldMouse(event) {
-  for(let i=0; i<(BOARD_SIZE*BOARD_SIZE); ++i) {
+  for(let i=0; i<(rows*cols); ++i) {
     //Add walls
-    if(cells[i] == event.target && cells[i].contains(event.target) && currentKey == null) {
+    if(cells[i] == event.target && cells[i].contains(event.target) && currentKey == null && cells[i].style.backgroundColor != "white") {
+      cells[i].style.backgroundColor = "white"
+      if(cells[i] == start) {
+        start = null;
+      }
+      else if(cells[i] == end) {
+        end = null;
+      }
+    }
+    else if(cells[i] == event.target && cells[i].contains(event.target) && currentKey == null) {
       cells[i].style.backgroundColor = "black";
     }
   }
 }
 
+//Applies the Dijkstra algorithm
+function dijkstra() {
+  //Initializing list of nodes and set every node to Inifinty
+  let visitedNodes = [];
+  for (var i=0; i<rows; ++i){
+    for (var j=0; j<cols; ++j){
+      visitedNodes[i][j] = Infinity;
+    }
+  }
 
-makeGrid(BOARD_SIZE, BOARD_SIZE);
+}
+
+makeGrid(rows, cols);
 document.addEventListener("click", onClick);
 document.addEventListener("keydown", pressKey);
 document.addEventListener("keyup", releaseKey);
 document.addEventListener("mousedown", onHoldMouse);
+dijkstra();
